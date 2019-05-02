@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Apple",
+    "symbol": "AAPL"
+  },
+  {
+    "name": "Microsoft",
+    "symbol": "MSFT"
+  },
+  {
+    "name": "Facebook",
+    "symbol": "FB"
+  },
+  {
+    "name": "Google",
+    "symbol": "GOOGL"
+  },
+  {
+    "name": "EnteroMedics Inc.",
+    "symbol": "ETRM"
+  },
+  {
+    "name": "iShares MSCI Europe Financials Sector Index Fund",
+    "symbol": "EUFN"
+  },
+  {
+    "name": "iShares MSCI Emerging Markets Value Index Fund",
+    "symbol": "EVAL"
+  },
+  {
+    "name": "Lombard Medical, Inc.",
+    "symbol": "EVAR"
+  }
+]

@@ -4,7 +4,6 @@
 
 import React, {Component} from 'react';
 import * as PropTypes from "prop-types";
-import {format} from "date-fns";
 
 import './OHLCChart.css'
 
@@ -15,23 +14,51 @@ class OHLCChart extends Component {
     this.state = {
       width: 600,
       height: 348,
+      monthNames: ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ]
     };
   }
 
   componentDidMount() {
-    const rect = this.chartBounds.current.getBoundingClientRect();
+    const {width, height} = this.getChartBounds();
     this.setState({
-      width: rect.width,
-      height: rect.height
-    })
+      width,
+      height
+    });
+    window.addEventListener('resize', this.onResize);
+  }
+
+  /**
+   * Get Rect bounds
+   * @returns {ClientRect | DOMRect}
+   */
+  getChartBounds = () => {
+    return this.chartBounds.current.getBoundingClientRect();
+  };
+
+  /**
+   * On window resize change SVG size
+   */
+  onResize = () => {
+    const {width, height} = this.getChartBounds();
+    this.setState({
+      width,
+      height
+    });
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
   }
 
   render() {
     let {columns} = this.props;
-    let {width, height} = this.state;
-    const yAxisGap = width / columns.length;
+    let {width, height, monthNames} = this.state;
+    const yAxisGap = (width - 10) / columns.length;
     let months = columns.reduce((group, column) => {
-      group.add(format(column[0], "MMM"));
+
+      group.add(monthNames[new Date(column[0]).getMonth()]);
       return group;
     }, new Set());
 
@@ -109,7 +136,7 @@ class OHLCChart extends Component {
 
           </g>
           <g className="grid y-grid" id="yGrid">
-            <line x1="35" x2={width} y1={height - 30} y2={height - 30} strokeWidth="3" stroke="black"/>
+            <line x1="35" x2={width - 10} y1={height - 30} y2={height - 30} strokeWidth="3" stroke="black"/>
           </g>
           <g className="labels x-labels">
             {months && months.map((m, i) => {
