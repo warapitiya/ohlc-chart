@@ -58,13 +58,13 @@ class OHLCChart extends Component {
    * @param maxHeightNumber
    * @param minHeightNumber
    * @param height
-   * @param heightTopPadding
    * @returns {number}
    */
-  calculate = (val, maxHeightNumber, minHeightNumber, height, heightTopPadding) => {
-    const b = height - heightTopPadding;
-    const ratio = (b / (maxHeightNumber - minHeightNumber)) * val;
-    return b - ratio;
+  calculate = (val, maxHeightNumber, minHeightNumber, height) => {
+    debugger;
+    const singleCell = height / (maxHeightNumber - minHeightNumber);
+    const points = val - minHeightNumber;
+    return height - (points * singleCell);
   };
 
   color = (val1, val2) => {
@@ -86,12 +86,13 @@ class OHLCChart extends Component {
       return group;
     }, []).sort();
 
+    debugger;
     const maxHeightNumber = Math.ceil(Math.max(...dataSet) / scale) * scale;
     const minHeightNumber = Math.floor(Math.min(...dataSet) / scale) * scale;
     let yAxis = [minHeightNumber];
 
     debugger;
-    const heightTopPadding = 10;
+    const heightTopPadding = 2;
     const heightBottomPadding = 20;
     const actualHeight = height - heightBottomPadding - heightTopPadding;
 
@@ -99,7 +100,7 @@ class OHLCChart extends Component {
     const xAxisGap = (actualHeight - heightTopPadding) / totYScale;
 
     for (let i = 1; i <= totYScale; i++) {
-      yAxis = [...yAxis, scale * i]
+      yAxis = [...yAxis, minHeightNumber + (scale * i)];
     }
 
     months = Array.from(months);
@@ -125,21 +126,21 @@ class OHLCChart extends Component {
                   // Middle Stroke
                   <line x1={40 + (yAxisGap * (i + 1))}
                         x2={40 + (yAxisGap * (i + 1))}
-                        y1={10 + this.calculate(x[2], maxHeightNumber, minHeightNumber, actualHeight, heightTopPadding)}
-                        y2={10 + this.calculate(x[3], maxHeightNumber, minHeightNumber, actualHeight, heightTopPadding)}
+                        y1={heightTopPadding + this.calculate(x[2], maxHeightNumber, minHeightNumber, actualHeight)}
+                        y2={heightTopPadding + this.calculate(x[3], maxHeightNumber, minHeightNumber, actualHeight)}
                         strokeWidth="3"
                         stroke={colorStyle}/>
                   // Close
                   <line x1={40 + (yAxisGap * (i + 1))}
                         x2={45 + (yAxisGap * (i + 1))}
-                        y1={this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight, 0)}
-                        y2={this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight, 0)}
+                        y1={heightTopPadding + this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight)}
+                        y2={heightTopPadding + this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight)}
                         strokeWidth="3" stroke={colorStyle}/>
                   // Open
                   <line x1={35 + (yAxisGap * (i + 1))}
                         x2={40 + (yAxisGap * (i + 1))}
-                        y1={this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight, 0)}
-                        y2={this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight, 0)}
+                        y1={heightTopPadding + this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight)}
+                        y2={heightTopPadding + this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight)}
                         strokeWidth="3" stroke={colorStyle}/>
                 </g>
               )

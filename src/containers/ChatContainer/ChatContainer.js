@@ -38,7 +38,7 @@ function ChatContainer() {
         <ListGroup onSelect={onStockSelect} selectedIndex={selectedStockIndex} stockItems={stocks}/>
       </div>
       <div className="col-md-9 py-2">
-        {stocks && stocks.length !== 0 && (<OHLCChart scale={5} columns={stocks[selectedStockIndex].stockChanges}/>)}
+        {stocks && stocks.length !== 0 && (<OHLCChart scale={10} columns={stocks[selectedStockIndex].stockChanges}/>)}
       </div>
     </div>
   );
