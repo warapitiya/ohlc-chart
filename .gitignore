@@ -24,3 +24,6 @@ chrome-user-data
 .vscode
 *.swp
 *.swo
+
+# Build
+/dist
