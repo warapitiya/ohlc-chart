@@ -69,7 +69,6 @@ function ChatContainer() {
               parseFloat(data[key]['3. low']),
               parseFloat(data[key]['4. close'])]
           ));
-        console.log(_d);
         setStocks(_d);
       });
   }, [selectedStockIndex]);
