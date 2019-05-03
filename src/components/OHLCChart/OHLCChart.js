@@ -86,12 +86,10 @@ class OHLCChart extends Component {
       return group;
     }, []).sort();
 
-    debugger;
     const maxHeightNumber = Math.ceil(Math.max(...dataSet) / scale) * scale;
     const minHeightNumber = Math.floor(Math.min(...dataSet) / scale) * scale;
     let yAxis = [minHeightNumber];
-
-    debugger;
+    
     const heightTopPadding = 2;
     const heightBottomPadding = 20;
     const actualHeight = height - heightBottomPadding - heightTopPadding;
@@ -152,18 +150,18 @@ class OHLCChart extends Component {
           </g>
           <g className="labels x-labels">
             {months && months.map((m, i) => {
-              return <text key={i} x={widthDistance * (i + 1)} y={height - 10}>{m}</text>
+              return <text key={i} x={widthDistance * (i + 1)} y={height - heightTopPadding}>{m}</text>
             })}
           </g>
           <g className="labels y-labels">
             {yAxis && yAxis.reverse().map((d, i) => {
               return (
                 <g key={i}>
-                  <text x="30" y={10 + (i * xAxisGap)}>{d}</text>
+                  <text x="30" y={heightTopPadding + (i * xAxisGap) + 10}>{d}</text>
                   <line x1="35"
                         x2="40"
-                        y1={10 + (i * xAxisGap)}
-                        y2={10 + (i * xAxisGap)}
+                        y1={heightTopPadding + (i * xAxisGap)}
+                        y2={heightTopPadding + (i * xAxisGap)}
                         strokeWidth="3" stroke="black"/>
 
                 </g>
