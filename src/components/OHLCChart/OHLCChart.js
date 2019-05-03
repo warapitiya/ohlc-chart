@@ -52,12 +52,30 @@ class OHLCChart extends Component {
     window.removeEventListener('resize', this.onResize);
   }
 
+  /**
+   * Calculate ratio
+   * @param val
+   * @param maxHeightNumber
+   * @param minHeightNumber
+   * @param height
+   * @param heightTopPadding
+   * @returns {number}
+   */
+  calculate = (val, maxHeightNumber, minHeightNumber, height, heightTopPadding) => {
+    const b = height - heightTopPadding;
+    const ratio = (b / (maxHeightNumber - minHeightNumber)) * val;
+    return b - ratio;
+  };
+
+  color = (val1, val2) => {
+    return val1 < val2 ? 'green' : 'red';
+  };
+
   render() {
-    let {columns} = this.props;
+    let {columns, scale} = this.props;
     let {width, height, monthNames} = this.state;
     const yAxisGap = (width - 10) / columns.length;
     let months = columns.reduce((group, column) => {
-
       group.add(monthNames[new Date(column[0]).getMonth()]);
       return group;
     }, new Set());
@@ -68,31 +86,24 @@ class OHLCChart extends Component {
       return group;
     }, []).sort();
 
-    const maxHeightNumber = Math.ceil(Math.max(...dataSet) / 5) * 5;
-    const minHeightNumber = Math.floor(Math.min(...dataSet) / 5) * 5;
-    const heightDiff = 5;
-    let yAxis = [];
+    const maxHeightNumber = Math.ceil(Math.max(...dataSet) / scale) * scale;
+    const minHeightNumber = Math.floor(Math.min(...dataSet) / scale) * scale;
+    let yAxis = [minHeightNumber];
 
-    for (let i = minHeightNumber; i <= maxHeightNumber; i += heightDiff) {
-      yAxis = [...yAxis, i];
+    debugger;
+    const heightTopPadding = 10;
+    const heightBottomPadding = 20;
+    const actualHeight = height - heightBottomPadding - heightTopPadding;
+
+    const totYScale = (maxHeightNumber - minHeightNumber) / scale;
+    const xAxisGap = (actualHeight - heightTopPadding) / totYScale;
+
+    for (let i = 1; i <= totYScale; i++) {
+      yAxis = [...yAxis, scale * i]
     }
-
-    const generalHeight = height - 30;
-    const heightPadding = 10;
-
-    const xAxisGap = generalHeight / yAxis.length;
 
     months = Array.from(months);
     const widthDistance = (width - 150) / months.length;
-
-    function gen(val) {
-      const a = height / (maxHeightNumber - minHeightNumber);
-      return ((maxHeightNumber - val) * a) - 30;
-    }
-
-    function color(val1, val2) {
-      return val1 < val2 ? 'green' : 'red';
-    }
 
     return (
       <div ref={this.chartBounds}>
@@ -100,35 +111,35 @@ class OHLCChart extends Component {
              style={{width: width, height: height}}
              aria-labelledby="title" role="img">
           <g className="grid x-grid" id="xGrid">
-            <line x1="40" x2="40" y1={heightPadding} y2={generalHeight} strokeWidth="3" stroke="black"/>
+            <line x1="40" x2="40" y1={heightTopPadding} y2={actualHeight} strokeWidth="3" stroke="black"/>
             {columns.map((x, i) => {
-              const colorStyle = color(x[1], x[4]);
+              const colorStyle = this.color(x[1], x[4]);
               return (
                 <g key={i}>
                   // Main line
                   <line
                     x1={40 + (yAxisGap * (i + 1))}
                     x2={40 + (yAxisGap * (i + 1))}
-                    y1={heightPadding}
-                    y2={generalHeight}/>
+                    y1={heightTopPadding}
+                    y2={actualHeight}/>
                   // Middle Stroke
                   <line x1={40 + (yAxisGap * (i + 1))}
                         x2={40 + (yAxisGap * (i + 1))}
-                        y1={gen(x[2])}
-                        y2={gen(x[3])}
+                        y1={10 + this.calculate(x[2], maxHeightNumber, minHeightNumber, actualHeight, heightTopPadding)}
+                        y2={10 + this.calculate(x[3], maxHeightNumber, minHeightNumber, actualHeight, heightTopPadding)}
                         strokeWidth="3"
                         stroke={colorStyle}/>
-                  // Close (TOP)
+                  // Close
                   <line x1={40 + (yAxisGap * (i + 1))}
                         x2={45 + (yAxisGap * (i + 1))}
-                        y1={gen(x[4])}
-                        y2={gen(x[4])}
+                        y1={this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight, 0)}
+                        y2={this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight, 0)}
                         strokeWidth="3" stroke={colorStyle}/>
-                  // Open (BOTTOM)
+                  // Open
                   <line x1={35 + (yAxisGap * (i + 1))}
                         x2={40 + (yAxisGap * (i + 1))}
-                        y1={gen(x[1])}
-                        y2={gen(x[1])}
+                        y1={this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight, 0)}
+                        y2={this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight, 0)}
                         strokeWidth="3" stroke={colorStyle}/>
                 </g>
               )
@@ -136,7 +147,7 @@ class OHLCChart extends Component {
 
           </g>
           <g className="grid y-grid" id="yGrid">
-            <line x1="35" x2={width - 10} y1={height - 30} y2={height - 30} strokeWidth="3" stroke="black"/>
+            <line x1="35" x2={width - 10} y1={actualHeight} y2={actualHeight} strokeWidth="3" stroke="black"/>
           </g>
           <g className="labels x-labels">
             {months && months.map((m, i) => {
@@ -147,10 +158,11 @@ class OHLCChart extends Component {
             {yAxis && yAxis.reverse().map((d, i) => {
               return (
                 <g key={i}>
-                  <text x="30" y={heightPadding + (i * xAxisGap)}>{d}</text>
-                  <line x1="35" x2="40"
-                        y1={heightPadding + (i * xAxisGap)}
-                        y2={heightPadding + (i * xAxisGap)}
+                  <text x="30" y={10 + (i * xAxisGap)}>{d}</text>
+                  <line x1="35"
+                        x2="40"
+                        y1={10 + (i * xAxisGap)}
+                        y2={10 + (i * xAxisGap)}
                         strokeWidth="3" stroke="black"/>
 
                 </g>

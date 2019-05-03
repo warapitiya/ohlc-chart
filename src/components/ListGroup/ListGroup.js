@@ -3,15 +3,9 @@
  */
 import React, {useState} from 'react';
 
-function ListGroup({stockItems, onSelect}) {
-  const STORAGE_INDEX = 'app.selectedStockIndex';
+function ListGroup({stockItems, selectedIndex, onSelect}) {
 
-  const getIndexFromStore = () => {
-    const index = localStorage.getItem(STORAGE_INDEX);
-    return index === null ? 0 : parseInt(index);
-  };
-
-  const [selectedStock, setSelectedStock] = useState(getIndexFromStore());
+  const [selectedStock, setSelectedStock] = useState(selectedIndex);
 
   /**
    * Handle click event
@@ -19,7 +13,6 @@ function ListGroup({stockItems, onSelect}) {
    * @param index
    */
   const handleClick = (stock, index) => {
-    localStorage.setItem(STORAGE_INDEX, index);
     setSelectedStock(index);
     onSelect(index);
   };
