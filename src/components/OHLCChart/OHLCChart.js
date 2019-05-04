@@ -79,7 +79,7 @@ class OHLCChart extends Component {
     // Get Stats
     let {width, height, monthNames} = this.state;
     // Y Axis Gap
-    const yAxisGap = (width - 10) / columns.length;
+    const yAxisGap = (width - 45) / columns.length;
 
     // X axis labels in months
     let _xLabels = columns.reduce((group, column) => {
@@ -147,11 +147,11 @@ class OHLCChart extends Component {
                         stroke={colorStyle}/>
                   {/*Close*/}
                   <line x1={40 + (yAxisGap * (i + 1))}
-                        x2={45 + (yAxisGap * (i + 1))}
+                        x2={40 + (yAxisGap * (i + 1)) + 5}
                         y1={heightTopPadding + this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight)}
                         y2={heightTopPadding + this.calculate(x[4], maxHeightNumber, minHeightNumber, actualHeight)}
                         strokeWidth="3" stroke={colorStyle}/>
-                  <line x1={35 + (yAxisGap * (i + 1))}
+                  <line x1={40 + (yAxisGap * (i + 1)) - 5}
                         x2={40 + (yAxisGap * (i + 1))}
                         y1={heightTopPadding + this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight)}
                         y2={heightTopPadding + this.calculate(x[1], maxHeightNumber, minHeightNumber, actualHeight)}
@@ -161,7 +161,7 @@ class OHLCChart extends Component {
             })}
           </g>
           <g className="grid y-grid" id="yGrid">
-            <line x1="35" x2={width - 10} y1={actualHeight} y2={actualHeight} strokeWidth="3" stroke="black"/>
+            <line x1="35" x2={width} y1={actualHeight} y2={actualHeight} strokeWidth="3" stroke="black"/>
           </g>
           <g className="labels x-labels">
             {_columns.map((x, i) => {
